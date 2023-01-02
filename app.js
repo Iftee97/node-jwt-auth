@@ -1,7 +1,7 @@
 const express = require('express')
-const mongoose = require('mongoose')
-
 const app = express()
+const mongoose = require('mongoose')
+const authRoutes = require('./routes/authRoutes')
 
 // middleware
 app.use(express.static('public'))
@@ -22,3 +22,4 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCr
 // routes
 app.get('/', (req, res) => res.render('home'))
 app.get('/smoothies', (req, res) => res.render('smoothies'))
+app.use(authRoutes)
