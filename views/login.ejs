@@ -15,10 +15,39 @@
 
     <script>
       const form = document.querySelector('form')
-      form.addEventListener('submit', (e) => {
+      const emailError = document.querySelector('.email.error')
+      const passwordError = document.querySelector('.password.error')
+
+      form.addEventListener('submit', async (e) => {
         e.preventDefault()
+
+        // reset errors:
+        // emailError.textContent = ''
+        // passwordError.textContent = ''
+
         const email = form.email.value
         const password = form.password.value
-        console.log(email, password)
+        // console.log(email, password)
+
+        try {
+          const res = await fetch('/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          })
+          const data = await res.json()
+          console.log('data:', data)
+          if (data.errors) {
+            emailError.textContent = data.errors.email
+            passwordError.textContent = data.errors.password
+          }
+          if (data.user) {
+            location.assign('/') // redirect to home page
+          }
+        } catch (error) {
+          console.log(error)
+        }
       })
     </script>
