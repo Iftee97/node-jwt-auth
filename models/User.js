@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 const { isEmail } = require('validator')
+const bcrypt = require('bcrypt')
 
 const userSchema = new Schema({
   email: {
@@ -18,15 +19,16 @@ const userSchema = new Schema({
 })
 
 // mongoose hooks:
-// fire a function after doc saved to db
-userSchema.post('save', function (doc, next) {
-  console.log('new user was created & saved to db', doc)
+// fire a function before doc saved to db
+userSchema.pre('save', async function (next) {
+  const salt = await bcrypt.genSalt()
+  this.password = await bcrypt.hash(this.password, salt)
   next()
 })
 
-// fire a function before doc saved to db
-userSchema.pre('save', function (next) {
-  console.log('user about to be created & saved', this)
+// fire a function after doc saved to db
+userSchema.post('save', function (doc, next) {
+  console.log('new user was created & saved to db', doc)
   next()
 })
 
